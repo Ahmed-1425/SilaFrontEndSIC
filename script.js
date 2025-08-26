@@ -809,5 +809,3 @@ function setupHeroGlow() {
 }
 // initialize hero glow
 setupHeroGlow();
-
-
