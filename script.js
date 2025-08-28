@@ -36,14 +36,26 @@ function initializeApp() {
     
     // Initialize background animations
     setupBackgroundAnimations();
+    
+    // Initialize speech synthesis
+    initializeSpeechSynthesis();
+    
+
 }
 
 // Setup Event Listeners
 function setupEventListeners() {
-    // Mobile menu toggle
+    // Mobile menu toggle -> use sidebar, not legacy dropdown
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    if (mobileMenuBtn && !mobileMenuBtn.hasAttribute('onclick')) {
+        mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+    }
+    // Close sidebar when clicking overlay (avoid double-binding if inline handler exists)
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    if (sidebarOverlay && !sidebarOverlay.hasAttribute('onclick')) {
+        sidebarOverlay.addEventListener('click', () => {
+            if (isMobileMenuOpen) toggleMobileSidebar();
+        });
     }
     
     // Close mobile menu when clicking on links
@@ -77,6 +89,20 @@ function setupEventListeners() {
 
 // Language Toggle
 function toggleLanguage() {
+    // Stop any ongoing speech
+    if (isSpeaking) {
+        speechSynthesis.cancel();
+        isSpeaking = false;
+        const speakerBtn = document.getElementById('speakerBtn');
+        const speakerIcon = document.getElementById('speakerIcon');
+        if (speakerBtn) {
+            speakerBtn.classList.remove('speaking');
+        }
+        if (speakerIcon) {
+            speakerIcon.className = 'fas fa-volume-up';
+        }
+    }
+    
     currentLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
     
     // Update HTML attributes
@@ -157,7 +183,7 @@ function toggleTheme() {
     }, 300);
 }
 
-// Mobile Menu Toggle
+// Mobile Menu Toggle (Legacy - keeping for compatibility)
 function toggleMobileMenu() {
     const navMenu = document.getElementById('navMenu');
     const mobileBtn = document.querySelector('.mobile-menu-btn');
@@ -184,6 +210,142 @@ function toggleMobileMenu() {
         }
     }
 }
+
+// Mobile Sidebar Toggle
+function toggleMobileSidebar() {
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const navMenu = document.getElementById('navMenu');
+    const mobileBtn = document.querySelector('.mobile-menu-btn');
+    
+    isMobileMenuOpen = !isMobileMenuOpen;
+    
+    if (sidebar) {
+        sidebar.classList.toggle('active');
+    }
+    
+    if (overlay) {
+        overlay.classList.toggle('active');
+    }
+    // Ensure legacy dropdown is always hidden when using sidebar
+    if (navMenu) {
+        navMenu.classList.remove('active');
+    }
+    
+    if (mobileBtn) {
+        mobileBtn.classList.toggle('active');
+        
+        // Animate hamburger to X
+        const spans = mobileBtn.querySelectorAll('span');
+        if (isMobileMenuOpen) {
+            spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+            spans[1].style.opacity = '0';
+            spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+        } else {
+            spans[0].style.transform = 'none';
+            spans[1].style.opacity = '1';
+            spans[2].style.transform = 'none';
+        }
+    }
+    
+    // Prevent body scroll when sidebar is open
+    if (isMobileMenuOpen) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+}
+
+// Text-to-Speech Variables
+let speechSynthesis = window.speechSynthesis;
+let currentUtterance = null;
+let isSpeaking = false;
+
+// Text-to-Speech Toggle
+function toggleSpeech() {
+    const speakerBtn = document.getElementById('speakerBtn');
+    const speakerIcon = document.getElementById('speakerIcon');
+    const translationText = document.getElementById('translationText');
+    
+    if (!translationText || !translationText.textContent || translationText.textContent.trim() === '') {
+        return;
+    }
+    
+    if (isSpeaking) {
+        // Stop speaking
+        if (currentUtterance) {
+            speechSynthesis.cancel();
+        }
+        isSpeaking = false;
+        speakerBtn.classList.remove('speaking');
+        speakerIcon.className = 'fas fa-volume-up';
+    } else {
+        // Start speaking
+        const text = translationText.textContent.trim();
+        
+        // Create new utterance
+        currentUtterance = new SpeechSynthesisUtterance(text);
+        
+        // Set language based on current language setting
+        if (currentLanguage === 'ar') {
+            currentUtterance.lang = 'ar-SA';
+            currentUtterance.voice = getArabicVoice();
+        } else {
+            currentUtterance.lang = 'en-US';
+            currentUtterance.voice = getEnglishVoice();
+        }
+        
+        // Set speech properties
+        currentUtterance.rate = 0.9;
+        currentUtterance.pitch = 1;
+        currentUtterance.volume = 1;
+        
+        // Event listeners
+        currentUtterance.onstart = () => {
+            isSpeaking = true;
+            speakerBtn.classList.add('speaking');
+            speakerIcon.className = 'fas fa-volume-mute';
+        };
+        
+        currentUtterance.onend = () => {
+            isSpeaking = false;
+            speakerBtn.classList.remove('speaking');
+            speakerIcon.className = 'fas fa-volume-up';
+        };
+        
+        currentUtterance.onerror = () => {
+            isSpeaking = false;
+            speakerBtn.classList.remove('speaking');
+            speakerIcon.className = 'fas fa-volume-up';
+        };
+        
+        // Start speaking
+        speechSynthesis.speak(currentUtterance);
+    }
+}
+
+// Get Arabic Voice
+function getArabicVoice() {
+    const voices = speechSynthesis.getVoices();
+    return voices.find(voice => voice.lang.includes('ar')) || voices[0];
+}
+
+// Get English Voice
+function getEnglishVoice() {
+    const voices = speechSynthesis.getVoices();
+    return voices.find(voice => voice.lang.includes('en')) || voices[0];
+}
+
+// Initialize speech synthesis voices
+function initializeSpeechSynthesis() {
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = () => {
+            // Voices are loaded
+        };
+    }
+}
+
+
 
 // Header Scroll Effect
 function handleHeaderScroll() {
@@ -435,9 +597,7 @@ function setupFeatureCardInteractions() {
                 card.style.transform = 'translateY(-15px) scale(1.02)';
             }, 150);
             
-            // Show notification
-            const title = card.querySelector('.feature-title').textContent;
-            showNotification(`${title} - ${currentLanguage === 'ar' ? 'ميزة رائعة!' : 'Amazing feature!'}`, 'success');
+                    // Removed notification popup
         });
     });
 }
@@ -592,6 +752,13 @@ function startTranslation() {
             translationText.textContent = randomTranslation;
             translationText.style.animation = 'none';
             
+            // Auto-speak the translation
+            setTimeout(() => {
+                if (!isSpeaking) {
+                    toggleSpeech();
+                }
+            }, 500);
+            
             showNotification(
                 currentLanguage === 'ar' ? 'تمت الترجمة بنجاح!' : 'Translation completed successfully!',
                 'success'
@@ -648,9 +815,9 @@ function handleKeyboardNavigation(e) {
         }
     }
     
-    // Toggle mobile menu with Enter key
+    // Toggle sidebar with Enter key (mobile)
     if (e.key === 'Enter' && e.target.classList.contains('mobile-menu-btn')) {
-        toggleMobileMenu();
+        toggleMobileSidebar();
     }
     
     // Open translation modal with Ctrl/Cmd + T
@@ -775,17 +942,14 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     
-    // Show install button or notification
-    showNotification(
-        currentLanguage === 'ar' ? 'يمكنك تثبيت التطبيق الآن!' : 'You can install the app now!',
-        'info'
-    );
+    // Removed notification popup - user can install manually if needed
 });
 
 // Export functions for global access
 window.toggleLanguage = toggleLanguage;
 window.toggleTheme = toggleTheme;
 window.toggleMobileMenu = toggleMobileMenu;
+window.toggleMobileSidebar = toggleMobileSidebar;
 window.openTranslationModal = openTranslationModal;
 window.closeTranslationModal = closeTranslationModal;
 window.startTranslation = startTranslation;

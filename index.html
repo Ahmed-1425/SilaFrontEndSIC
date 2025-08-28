@@ -41,7 +41,7 @@
         <nav class="nav-container">
             <div class="nav-brand">
                 <div class="logo-wrapper">
-                    <div class="logo-icon">🤟</div>
+                    <img src="assets/logo-sila.png" alt="صلة - Sila" class="logo-image">
                     <h1 class="brand-text">صلة</h1>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                 <button class="control-btn theme-toggle" onclick="toggleTheme()">
                     <i class="fas fa-moon"></i>
                 </button>
-                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -81,6 +81,54 @@
             </div>
         </nav>
     </header>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <img src="assets/logo-sila.png" alt="صلة - Sila" class="sidebar-logo">
+                <h3 class="sidebar-brand-text">صلة</h3>
+            </div>
+            <button class="sidebar-close" onclick="toggleMobileSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-content">
+            <div class="sidebar-nav">
+                <a href="#home" class="sidebar-link" onclick="toggleMobileSidebar()">
+                    <i class="fas fa-home"></i>
+                    <span data-ar="الرئيسية" data-en="Home">الرئيسية</span>
+                </a>
+                <a href="#features" class="sidebar-link" onclick="toggleMobileSidebar()">
+                    <i class="fas fa-star"></i>
+                    <span data-ar="المميزات" data-en="Features">المميزات</span>
+                </a>
+                <a href="#about" class="sidebar-link" onclick="toggleMobileSidebar()">
+                    <i class="fas fa-info-circle"></i>
+                    <span data-ar="حول" data-en="About">حول</span>
+                </a>
+                <a href="#contact" class="sidebar-link" onclick="toggleMobileSidebar()">
+                    <i class="fas fa-envelope"></i>
+                    <span data-ar="اتصل بنا" data-en="Contact">اتصل بنا</span>
+                </a>
+            </div>
+            <div class="sidebar-controls">
+                <button class="sidebar-btn language-toggle" onclick="toggleLanguage()">
+                    <i class="fas fa-globe"></i>
+                    <span data-ar="English" data-en="العربية">English</span>
+                </button>
+                <button class="sidebar-btn theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                    <span data-ar="المظهر" data-en="Theme">المظهر</span>
+                </button>
+                <button class="sidebar-btn translation-btn" onclick="openTranslationModal(); toggleMobileSidebar();">
+                    <i class="fas fa-camera"></i>
+                    <span data-ar="ابدأ الترجمة" data-en="Start Translation">ابدأ الترجمة</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
 
     <!-- Hero Section -->
     <section id="home" class="hero-section">
@@ -103,6 +151,62 @@
                 <div class="brand-circle c3"></div>
             </div>
             <div class="hero-content">
+                <!-- Enhanced Left Info Box -->
+                <div class="hero-left-box">
+                    <div class="enhanced-info-box">
+                        <div class="info-header">
+                            <div class="info-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 data-ar="ذكاء اصطناعي متقدم" data-en="Advanced AI">ذكاء اصطناعي متقدم</h3>
+                        </div>
+                        
+                        <div class="info-content">
+                            <div class="info-item">
+                                <div class="item-icon">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="item-text">
+                                    <h4 data-ar="رؤية حاسوبية" data-en="Computer Vision">رؤية حاسوبية</h4>
+                                    <p data-ar="تحديد دقيق لحركات اليد والأصابع" data-en="Accurate detection of hand and finger movements">تحديد دقيق لحركات اليد والأصابع</p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="item-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="item-text">
+                                    <h4 data-ar="معالجة فورية" data-en="Real-time Processing">معالجة فورية</h4>
+                                    <p data-ar="ترجمة فورية في أقل من ثانية" data-en="Instant translation in under a second">ترجمة فورية في أقل من ثانية</p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="item-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="item-text">
+                                    <h4 data-ar="خصوصية كاملة" data-en="Complete Privacy">خصوصية كاملة</h4>
+                                    <p data-ar="معالجة محلية بدون إنترنت" data-en="Local processing, no internet needed">معالجة محلية بدون إنترنت</p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="item-icon">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <div class="item-text">
+                                    <h4 data-ar="دعم شامل" data-en="Comprehensive Support">دعم شامل</h4>
+                                    <p data-ar="جميع أحرف الأبجدية العربية" data-en="All Arabic alphabet characters">جميع أحرف الأبجدية العربية</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+                
                 <div class="hero-text">
                     <div class="title-container">
                         <h1 class="main-title">
@@ -148,26 +252,7 @@
                     </div>
                 </div>
                 
-                <div class="hero-visual">
-                    <div class="interactive-demo">
-                        <div class="demo-header">
-                            <div class="status-indicator">
-                                <div class="status-dot"></div>
-                                <span data-ar="جاهز" data-en="Ready">جاهز</span>
-                            </div>
-                        </div>
-                        <div class="demo-content">
-                            <div class="translation-preview">
-                                <div class="preview-text" data-ar="مرحباً بك في صلة" data-en="Welcome to Sila">مرحباً بك في صلة</div>
-                                <div class="preview-icon">🤟</div>
-                            </div>
-                            <div class="live-indicator">
-                                <div class="pulse-dot"></div>
-                                <span data-ar="ترجمة مباشرة" data-en="Live Translation">ترجمة مباشرة</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
             
             <div class="scroll-indicator">
@@ -406,7 +491,7 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <div class="logo-wrapper">
-                        <div class="logo-icon">🤟</div>
+                        <img src="assets/logo-sila.png" alt="صلة - Sila" class="footer-logo-image">
                         <h3 class="brand-text">صلة</h3>
                     </div>
                     <p data-ar="منصة التواصل الذكية للجميع" data-en="Smart Communication Platform for Everyone">
@@ -474,9 +559,14 @@
                 <div class="translation-output">
                     <div class="output-header">
                         <div class="output-label" data-ar="الترجمة:" data-en="Translation:">الترجمة:</div>
-                        <div class="output-status">
-                            <div class="status-dot"></div>
-                            <span data-ar="مستعد" data-en="Ready">مستعد</span>
+                        <div class="output-controls">
+                            <button class="speaker-btn" id="speakerBtn" onclick="toggleSpeech()" title="Text to Speech">
+                                <i class="fas fa-volume-up" id="speakerIcon"></i>
+                            </button>
+                            <div class="output-status">
+                                <div class="status-dot"></div>
+                                <span data-ar="مستعد" data-en="Ready">مستعد</span>
+                            </div>
                         </div>
                     </div>
                     <div class="output-text" id="translationText" data-ar="في انتظار الإشارة..." data-en="Waiting for sign...">
