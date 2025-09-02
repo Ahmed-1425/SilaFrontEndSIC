@@ -3,6 +3,9 @@ let currentLanguage = 'ar';
 let currentTheme = 'light';
 let isMobileMenuOpen = false;
 
+// Backend endpoint (change if your port/domain is different)
+const API_URL = 'http://127.0.0.1:8010/api/sign/recognize';
+
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
@@ -715,6 +718,8 @@ function initializeCamera() {
             .then(stream => {
                 video.srcObject = stream;
                 video.play();
+                // Start sign recognition loop once camera is ready
+                tryStartSignRecognitionLoop(video);
             })
             .catch(error => {
                 console.error('Error accessing camera:', error);
@@ -729,6 +734,77 @@ function stopCamera() {
         const tracks = video.srcObject.getTracks();
         tracks.forEach(track => track.stop());
         video.srcObject = null;
+    }
+    // Stop recognition loop when camera stops
+    stopSignRecognitionLoop();
+}
+
+// Sign Recognition Streaming
+let signRecognitionIntervalId = null;
+let offscreenCanvas = null;
+let offscreenCtx = null;
+
+function tryStartSignRecognitionLoop(videoElement) {
+    // Guard against multiple intervals
+    stopSignRecognitionLoop();
+
+    // Create an offscreen canvas for frame capture
+    if (!offscreenCanvas) {
+        offscreenCanvas = document.createElement('canvas');
+        offscreenCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true });
+    }
+
+    // Polling interval (ms)
+    const CAPTURE_INTERVAL_MS = 400; // ~2.5 fps to balance performance
+    const TARGET_WIDTH = 320; // downscale for bandwidth; backend should accept this
+
+    signRecognitionIntervalId = setInterval(async () => {
+        const video = videoElement || document.getElementById('camera');
+        if (!video || video.readyState < 2) return; // not enough data yet
+
+        try {
+            const aspect = video.videoWidth / Math.max(1, video.videoHeight);
+            const width = TARGET_WIDTH;
+            const height = Math.round(width / aspect);
+
+            offscreenCanvas.width = width;
+            offscreenCanvas.height = height;
+            offscreenCtx.drawImage(video, 0, 0, width, height);
+
+            const blob = await new Promise(resolve => offscreenCanvas.toBlob(resolve, 'image/jpeg', 0.7));
+            if (!blob) return;
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'image/jpeg'
+                },
+                body: blob
+            });
+
+            if (!response.ok) return;
+            const result = await response.json();
+            if (!result) return;
+
+            const translationText = document.getElementById('translationText');
+            if (!translationText) return;
+
+            if (result.text && typeof result.text === 'string' && result.text.trim() !== '') {
+                translationText.textContent = result.text.trim();
+            } else if (result.label) {
+                translationText.textContent = String(result.label);
+            }
+        } catch (err) {
+            // Be silent to avoid spamming console; optionally log once
+        }
+    }, CAPTURE_INTERVAL_MS);
+}
+
+function stopSignRecognitionLoop() {
+    if (signRecognitionIntervalId) {
+        clearInterval(signRecognitionIntervalId);
+        signRecognitionIntervalId = null;
     }
 }
 
