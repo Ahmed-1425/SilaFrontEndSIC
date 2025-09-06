@@ -124,6 +124,9 @@ function toggleLanguage() {
     // Update navigation links
     updateNavigationLinks();
     
+    // Update team popup if it's open
+    updateTeamPopupLanguage();
+    
     // Add transition effect
     document.body.style.transition = 'all 0.3s ease';
     setTimeout(() => {
@@ -755,7 +758,7 @@ function tryStartSignRecognitionLoop(videoElement) {
     }
 
     // Polling interval (ms)
-    const CAPTURE_INTERVAL_MS = 400; // ~2.5 fps to balance performance
+    const CAPTURE_INTERVAL_MS = 500; // 2 FPS (500ms between captures)
     const TARGET_WIDTH = 320; // downscale for bandwidth; backend should accept this
 
     signRecognitionIntervalId = setInterval(async () => {
@@ -791,7 +794,19 @@ function tryStartSignRecognitionLoop(videoElement) {
             if (!translationText) return;
 
             if (result.text && typeof result.text === 'string' && result.text.trim() !== '') {
-                translationText.textContent = result.text.trim();
+                const arabicText = result.text.trim();
+                
+                // Check if it's an unknown prediction
+                if (arabicText === "غير معروف" || arabicText.includes("غير معروف")) {
+                    translationText.textContent = "غير معروف - حاول مرة أخرى";
+                    translationText.style.color = "#ff6b6b"; // Red color for unknown
+                    return;
+                }
+                
+                // Display only the Arabic letter
+                translationText.textContent = arabicText;
+                translationText.style.color = "#4ecdc4"; // Reset to normal color
+                
             } else if (result.label) {
                 translationText.textContent = String(result.label);
             }
@@ -1049,3 +1064,182 @@ function setupHeroGlow() {
 }
 // initialize hero glow
 setupHeroGlow();
+
+// Team Dashboard Functionality
+const teamMembers = [
+    {
+        name: "AHMED ALRASHEED",
+        nameAr: "أحمد الرشيد",
+        role: "Team Lead",
+        roleAr: "قائد الفريق",
+        image: "assets/ahmed_photo.jpeg",
+        description: "I am a Computer Science student at Shaqra University, an AI Engineer, an iOS Developer, and a Full-Stack Developer, passionate about creating innovative technological solutions that integrate artificial intelligence and software development. I have participated in leading and developing impactful projects such as Sila, a system for translating sign language letters, EduEye, which predicts at-risk students and identifies talented ones, and Velorent, a personal car rental platform. I was also part of the team behind Yusra, an application that facilitates access to accessible locations for people with disabilities. With my team, I achieved 2nd place in Qualithon Hackathon among 63 teams representing 30 universities. I also earned 1st place for three consecutive years in the University Scientific Forum in the \"Outstanding Entrepreneurship Idea\" track. I am a graduate of the Apple AI Foundation Program and the Samsung Innovation Campus in AI. I hold the Global Leadership Certificate from Coventry University in the UK, after being selected among the top 16 students to join this prestigious program. These achievements have strengthened my skills in leadership, innovation, and quality, and I strive to harness technology to create impactful and inspiring solutions.",
+        descriptionAr: "أنا طالب علوم حاسب في جامعة شقراء، ومهندس ذكاء اصطناعي، ومطور تطبيقات iOS، ومطور متكامل (Full-Stack Developer)، شغوف بابتكار حلول تقنية حديثة تجمع بين الذكاء الاصطناعي وتطوير البرمجيات. شاركت في قيادة وتطوير مشاريع مؤثرة مثل صلة لترجمة أحرف لغة الإشارة، وEduEye للتنبؤ بالمتعثرين واكتشاف الموهوبين، إضافة إلى تطوير Velorent لتأجير السيارات الشخصية، كما كنت جزءًا من فريق عمل على مشروع يسرا لتسهيل الوصول للأماكن المهيأة لذوي الإعاقة. حققت مع فريقي المركز الثاني في هاكاثون كواليثون بين 63 فريقًا من 30 جامعة. كما حصدت المركز الأول ثلاث سنوات متتالية في الملتقى العلمي بالجامعة بمسار الفكرة المتميزة بريادة الأعمال. أنا خريج المعسكر التأسيسي للذكاء الاصطناعي من أبل، وبرنامج سامسونج للذكاء الاصطناعي. أحمل شهادة القيادة العالمية من جامعة كوفنتري ببريطانيا بعد اختياري ضمن أفضل 16 طالبًا في الجامعة. هذه الإنجازات عززت مهاراتي في القيادة، الابتكار، والجودة، وأسعى لتسخير التقنية في صناعة حلول واقعية ملهمة.",
+        linkedin: "https://linkedin.com/in/ahmed-k-alrasheed-446b8829b"
+    },
+    {
+        name: "AMIRAH ALDAJANI",
+        nameAr: "أميرة الدجاني",
+        role: "UI/UX Designer",
+        roleAr: "مصممة واجهات المستخدم",
+        image: "assets/Amirah_logo.jpeg",
+        description: "Final-year Computer Science student majoring in Artificial Intelligence. Skilled in AI, IoT, Data Analytics, and Robotic Process Automation (RPA). Developed key projects such as Sila for translating sign language letters and Ghiras for plant disease detection. Also engineered a smart parking system integrating AI and IoT. Participated in hackathons and competitions, achieving 2nd place at the Smart Cities Hackathon. Completed a diverse internship at AlKhorayef Group covering Data Analytics, RPA, and Web Development, in addition to Samsung AI - innovation campus. Earned independent professional certifications in Artificial Intelligence, IoT, and Data Analytics.",
+        descriptionAr: "طالبة في السنة الأخيرة بقسم علوم الحاسب – مسار الذكاء الاصطناعي. أمتلك خبرة عملية في الذكاء الاصطناعي، إنترنت الأشياء، تحليل البيانات، وأتمتة العمليات الروبوتية. نفذت عدة مشاريع بارزة مثل \"صلة\" لترجمة أحرف لغة الإشارة و\"غراس\" لاكتشاف أمراض النباتات. كما طورت نظام حجز مواقف ذكي يعتمد على الذكاء الاصطناعي وIoT. شاركت في هاكاثونات وتحديات تقنية وحصلت على المركز الثاني في هاكاثون المدن الذكية. أنجزت تدريبًا متنوعًا في مجموعة الخريف شمل تحليل البيانات، RPA، وتطوير الويب، إضافةً إلى معسكر سامسونج للذكاء الاصطناعي. وحصلت على شهادات احترافية مستقلة في الذكاء الاصطناعي، إنترنت الأشياء، وتحليل البيانات.",
+        linkedin: "https://www.linkedin.com/in/aldajanii"
+    },
+    {
+        name: "TARFAH ALDOSARI",
+        nameAr: "طرفة الدوسري",
+        role: "Frontend Developer",
+        roleAr: "مطورة واجهات أمامية",
+        image: "assets/tarfah_logo.jpeg",
+        description: "I am Software Engineering student at King Saud University, with a strong interest in Artificial Intelligence and Software Architecture. I am passionate about developing intelligent solutions that simplify daily life and enhance user experience. My notable projects include \"Sila\", which translates Arabic Sign Language letters in real-time, and SmartPay, where I wrote project requirements, designed UML diagrams, and chose the appropriate system architecture. I cured working on a Travel Planning project, providing AI-based recommendations for organizing trips. I participated in the AI Bootcamp by Samsung and Misk to enhance my practical and applied skills in the field. I have completed advanced Machine Learning courses on Coursera and DataCamp to deepen my knowledge and expertise. I am skilled at problem analysis and designing efficient software solutions, with a focus on innovation and quality.",
+        descriptionAr: "أنا طالبة هندسة برمجيات من جامعة الملك سعود، مهتمة بالذكاء الاصطناعي ومعمارية البرمجيات. لدي شغف بتطوير حلول ذكية تسهّل الحياة اليومية وتحسّن تجربة المستخدم. من أبرز مشاريعي: \"صلة\" لترجمة حروف لغة الإشارة العربية في الوقت الفعلي، وSmartPay حيث كتبت متطلبات المشروع، صممت UML diagrams واخترت المعمارية المناسبة للنظام. اعمل حالياً على مشروع Travel Planning لتقديم توصيات الذكاء الاصطناعي في تنظيم الرحلات. شاركت في معسكر الذكاء الاصطناعي التابع لسامسونج و مسك لتعزيز مهاراتي العملية والتطبيقية في المجال. أخذت كورسات متقدمة في Machine Learning على Coursera وDataCamp لتعميق معرفتي وخبرتي في المجال. أتقن تحليل المشكلات وتصميم حلول برمجية فعّالة مع التركيز على الابتكار والجودة.",
+        linkedin: "https://linkedin.com/in/tarfahsaeed"
+    },
+    {
+        name: "SALEH ALWAKEEL",
+        nameAr: "صالح الوكيل",
+        role: "Backend Developer",
+        roleAr: "مطور خلفية",
+        image: "assets/saleh_photoi.jpeg",
+        description: "A Mechatronics and Robotics Engineering student at the University of Sheffield with hands-on experience in both software development and entrepreneurship. As a Software Engineering Intern at Mekaaz, I contributed to developing the company's application, strengthening my technical and teamwork skills. In parallel, my entrepreneurial journey has enhanced my leadership, problem-solving, and adaptability, allowing me to grow professionally while pursuing my studies.",
+        descriptionAr: "أدرس في هندسة الميكاترونكس والروبوتات بجامعة شيفيلد أمتلك خبرة عملية في تطوير البرمجيات وريادة الأعمال. خلال عملي كـ متدرب في هندسة البرمجيات بشركة Mekaaz ساهمت في تطوير تطبيق الشركة، مما عزز مهاراتي التقنية والعمل الجماعي. وبالتوازي، ساعدتني رحلتي الريادية على تنمية مهارات القيادة وحل المشكلات والقدرة على التكيف، مما مكنني من التطور المهني إلى جانب دراستي.",
+        linkedin: "https://www.linkedin.com/in/saleh-alwakeel-403291298"
+    },
+    {
+        name: "SAUD BIN SAMHAN",
+        nameAr: "سعود بن سمحان",
+        role: "AI Engineer",
+        roleAr: "مهندس ذكاء اصطناعي",
+        image: "assets/saud_photo.JPG",
+        description: "Final-year Computer Science student specializing in Artificial Intelligence, Data Science, and Full-Stack Development. Graduate of intensive Backend Development Program (Misk & MCIT) and currently pursuing IBM Data Science Specialist certification on Coursera alongside Samsung Innovation Campus. Skilled in AI/ML, Python, JavaScript, React, TensorFlow, and end-to-end web development with proven expertise in CNN, NLP, and PWA technologies. Developed key projects including SILA for AI-powered sign language translation with my team, HopeHub charity management platform with integration of 15+ APIs, and contributed to RAFEEQ educational platform for Imam University as my graduation project. Engineered comprehensive solutions from database design and system architecture to AI model implementation and modern user interfaces. Completed diverse training programs covering Backend Development, AI/ML, and earned professional certifications from IBM SkillsBuild in Cybersecurity and Data Fundamentals. Passionate about leveraging cutting-edge technology to create meaningful social impact and bridge communication gaps through innovative AI solutions.",
+        descriptionAr: "طالب في السنة الأخيرة في تخصص علوم الحاسب متخصص في الذكاء الاصطناعي وعلوم البيانات وتطوير المواقع المتكامل. متخرج من البرنامج المكثف لتطوير Backend (مسك و MCIT) وحالياً أحضر دورة IBM Data Science Specialist على Coursera مع معسكر سامسونج للابتكار. ماهر في الذكاء الاصطناعي والتعلم الآلي و Python وJavaScript وReact وTensorFlow مع خبرة مثبتة في CNN وNLP وPWA. طورت مشاريع رئيسية تشمل مشروع صلة لترجمة لغة الإشارة بالذكاء الاصطناعي مع فريقي، منصة HopeHub لإدارة الجمعيات الخيرية مع تكامل 15+ API، وشاركت في منصة RAFEEQ التعليمية لجامعة الإمام كمشروع تخرج. أطور حلول شاملة من تصميم قواعد البيانات وهندسة الأنظمة إلى تنفيذ نماذج الذكاء الاصطناعي وواجهات المستخدم الحديثة. أكملت برامج تدريبية متنوعة في تطوير Backend والذكاء الاصطناعي وحصلت على شهادات مهنية من IBM SkillsBuild في الأمن السيبراني وأساسيات البيانات. شغوف بالاستفادة من التقنيات المتطورة لخلق تأثير اجتماعي هادف وسد فجوات التواصل من خلال حلول الذكاء الاصطناعي المبتكرة.",
+        linkedin: "https://www.linkedin.com/in/saud-bin-samhan-278205343"
+    },
+    {
+        name: "MAAN HALWANI",
+        nameAr: "معن حلواني",
+        role: "Quality Assurance",
+        roleAr: "ضمان الجودة",
+        image: "assets/maan_photo.jpeg",
+        description: "I am a penultimate-year Data Science student at Umm Al-Qura University specializing in Artificial Intelligence, with advanced technical expertise and practical experience in developing intelligent solutions. I am proficient in Artificial Intelligence, Data Analytics, Internet of Things (IoT), and Software Development, and I have a strong record of building integrated systems that combine practical innovation with modern technologies. I led the development of several pioneering projects, including the Bitcoin Data Intelligence Dashboard for cryptocurrency analytics, the Health Aid platform enabling real-time blood donation, and the Jisr platform that connects entrepreneurs with investors to foster entrepreneurship. I actively participated in multiple national hackathons such as Hajjathon 3, Geo-Hackathon, and the Health Innovation Hackathon, where I achieved recognition and top placements for AI-powered innovative solutions. I hold three professional certifications from IBM in Applied Data Science, Artificial Intelligence, and Generative AI Fundamentals. In addition, I joined the Saudi Data Bootcamp and the Samsung Innovation Campus – AI Track, which enhanced my technical expertise and strengthened my practical skills. Currently, I am working at Ebdaat Al-Tajroba in the fields of Artificial Intelligence, Data Analytics, and Dashboard Development, where I apply state-of-the-art technologies to deliver business-driven solutions and support strategic decision-making.",
+        descriptionAr: "متقدمة وخلفية عملية في تطوير الحلول الذكية. متمكن في مجالات الذكاء الاصطناعي، تحليل البيانات، إنترنت الأشياء، وتطوير البرمجيات، ولدي سجل متميز في بناء أنظمة متكاملة تجمع بين الابتكار العملي وأحدث التقنيات. قدت تطوير عدة مشاريع رائدة من أبرزها لوحة تحليلات البيتكوين الذكية لمتابعة وتحليل العملات الرقمية، ومنصة Health Aid التي تمكّن من التبرع بالدم بشكل فوري وفعّال، ومنصة جسر التي تربط رواد الأعمال بالمستثمرين لتعزيز ريادة الأعمال. شاركت في عدد من الهاكاثونات الوطنية مثل حجاثون 3، جيو هاكاثون، وهيلثون الابتكار الصحي، وحققت من خلالها إنجازات ومراكز متقدمة عبر حلول مبتكرة مدعومة بالذكاء الاصطناعي. كما حصلت على ثلاث شهادات احترافية من IBM في Applied Data Science وArtificial Intelligence وGenerative AI Fundamentals، بالإضافة إلى التحاقي بمعسكر البيانات السعودي ومعسكر سامسونج للابتكار في الذكاء الاصطناعي، مما عزز خبراتي التقنية وصقل مهاراتي العملية. أعمل حاليًا في شركة أبعاد التجربة بمجال الذكاء الاصطناعي وتحليل البيانات وتطوير لوحات المعلومات، حيث أطبق أحدث التقنيات لتقديم حلول عملية تدعم قطاع الأعمال وتسهم في صنع القرارات الاستراتيجية.",
+        linkedin: "https://www.linkedin.com/in/maan-halawani-97a5a630a?trk=contact-info"
+    }
+];
+
+// Open team member popup
+function openTeamPopup(index) {
+    const member = teamMembers[index];
+    if (!member) return;
+    
+    // Create popup if it doesn't exist
+    let popup = document.getElementById('teamPopupOverlay');
+    if (!popup) {
+        popup = createTeamPopup();
+    }
+    
+    // Update popup content
+    const popupImage = popup.querySelector('#popupImage');
+    const popupName = popup.querySelector('#popupName');
+    const popupDescription = popup.querySelector('#popupDescription');
+    const popupLinkedin = popup.querySelector('#popupLinkedin');
+    const popupTextarea = popup.querySelector('#popupTextarea');
+    
+    popupImage.src = member.image;
+    popupImage.alt = member.name;
+    popupName.textContent = currentLanguage === 'ar' ? member.nameAr : member.name;
+    popupDescription.textContent = currentLanguage === 'ar' ? member.descriptionAr : member.description;
+    popupLinkedin.href = member.linkedin;
+    popupLinkedin.querySelector('span').textContent = currentLanguage === 'ar' ? 'الملف الشخصي على LinkedIn' : 'LinkedIn Profile';
+    popupTextarea.placeholder = currentLanguage === 'ar' ? 'اكتب تعليقك هنا...' : 'Write your comment here...';
+    popupTextarea.value = '';
+    
+    // Show popup
+    popup.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Create team popup HTML
+function createTeamPopup() {
+    const popupHTML = `
+        <div class="popup-overlay" id="teamPopupOverlay">
+            <div class="popup-content">
+                <button class="popup-close" onclick="closeTeamPopup()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="popup-image">
+                    <img id="popupImage" src="" alt="">
+                </div>
+                <div class="popup-text">
+                    <h3 id="popupName">Name</h3>
+                    <p id="popupDescription" style="color: #666; line-height: 1.6; margin-bottom: 20px; max-height: 200px; overflow-y: auto;">Description</p>
+                    <a id="popupLinkedin" href="#" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; color: #0077b5; text-decoration: none; margin-bottom: 20px; font-weight: 500;">
+                        <i class="fab fa-linkedin"></i>
+                        <span>LinkedIn Profile</span>
+                    </a>
+                    <textarea id="popupTextarea" placeholder="${currentLanguage === 'ar' ? 'اكتب تعليقك هنا...' : 'Write your comment here...'}"></textarea>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', popupHTML);
+    return document.getElementById('teamPopupOverlay');
+}
+
+// Close team popup
+function closeTeamPopup() {
+    const popup = document.getElementById('teamPopupOverlay');
+    if (popup) {
+        popup.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Close popup when clicking outside
+document.addEventListener('click', function(e) {
+    const popup = document.getElementById('teamPopupOverlay');
+    if (popup && e.target === popup) {
+        closeTeamPopup();
+    }
+});
+
+// Close popup with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeTeamPopup();
+    }
+});
+
+// Update popup content when language changes
+function updateTeamPopupLanguage() {
+    const popup = document.getElementById('teamPopupOverlay');
+    if (!popup || !popup.classList.contains('active')) return;
+    
+    // Find which team member is currently displayed
+    const popupName = popup.querySelector('#popupName');
+    const currentName = popupName.textContent;
+    
+    // Find the team member index
+    let memberIndex = -1;
+    teamMembers.forEach((member, index) => {
+        if (member.name === currentName || member.nameAr === currentName) {
+            memberIndex = index;
+        }
+    });
+    
+    if (memberIndex !== -1) {
+        // Update the popup with new language
+        const member = teamMembers[memberIndex];
+        const popupDescription = popup.querySelector('#popupDescription');
+        const popupLinkedin = popup.querySelector('#popupLinkedin');
+        const popupTextarea = popup.querySelector('#popupTextarea');
+        
+        popupName.textContent = currentLanguage === 'ar' ? member.nameAr : member.name;
+        popupDescription.textContent = currentLanguage === 'ar' ? member.descriptionAr : member.description;
+        popupLinkedin.querySelector('span').textContent = currentLanguage === 'ar' ? 'الملف الشخصي على LinkedIn' : 'LinkedIn Profile';
+        popupTextarea.placeholder = currentLanguage === 'ar' ? 'اكتب تعليقك هنا...' : 'Write your comment here...';
+    }
+}
